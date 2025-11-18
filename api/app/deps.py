@@ -25,7 +25,7 @@ def ensure_membership(space_id: int, user_id: int, db: Session):
 
 
 def is_member(db: Session, space_id: int, user_id: int) -> bool:
-    """Check if user is a member of space."""
+    """Проверка на то, является ли пользователь членом пространства"""
     row = db.scalar(
         select(SpaceMember).where(SpaceMember.space_id == space_id, SpaceMember.user_id == user_id)
     )

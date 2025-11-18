@@ -7,4 +7,10 @@ node_modules/
 .idea/
 .vscode/
 dist/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.coverage
+coverage.xml
+htmlcov/
 
