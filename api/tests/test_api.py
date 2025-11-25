@@ -65,6 +65,10 @@ def test_space_pages_tasks_flow(client):
     assert space["title"] == "Demo space"
     assert space["invite_code"]
 
+    list_spaces = client.get("/api/spaces")
+    assert list_spaces.status_code == 200
+    assert any(row["id"] == space_id for row in list_spaces.json())
+
     get_space = client.get(f"/api/spaces/{space_id}")
     assert get_space.status_code == 200
     assert get_space.json()["id"] == space_id

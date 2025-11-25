@@ -4,6 +4,26 @@ from typing import Literal, Optional
 from pydantic import BaseModel
 
 
+class UserOut(BaseModel):
+    id: int
+    name: str
+    email: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class UserCreate(BaseModel):
+    name: str
+    password: str
+    email: Optional[str] = None
+
+
+class UserLogin(BaseModel):
+    name: str
+    password: str
+
+
 class SpaceCreate(BaseModel):
     title: str
     description: Optional[str] = None

@@ -2,11 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.deps import get_db, is_member
-from app.models import Task, TaskStatus
+from app.deps import get_current_user, get_db, is_member
+from app.models import Task, TaskStatus, User
 from app.schemas import TaskCreate, TaskOut, TaskPatch
-
-from .spaces import current_user_id
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
@@ -21,9 +19,9 @@ def list_tasks(
     space_id: int,
     status: str | None = Query(None),
     db: Session = Depends(get_db),
-    uid: int = Depends(current_user_id),
+    user: User = Depends(get_current_user),
 ):
-    ensure_member(db, space_id, uid)
+    ensure_member(db, space_id, user.id)
     stmt = select(Task).where(Task.space_id == space_id)
     if status:
         stmt = stmt.where(Task.status == TaskStatus(status))
@@ -32,9 +30,9 @@ def list_tasks(
 
 @router.post("", response_model=TaskOut)
 def create_task(
-    payload: TaskCreate, db: Session = Depends(get_db), uid: int = Depends(current_user_id)
+    payload: TaskCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
-    ensure_member(db, payload.space_id, uid)
+    ensure_member(db, payload.space_id, user.id)
     if payload.assignee_id:
         # исполняющий должен быть членом space
         if not is_member(db, payload.space_id, payload.assignee_id):
@@ -45,7 +43,7 @@ def create_task(
         description=payload.description,
         due_at=payload.due_at,
         assignee_id=payload.assignee_id,
-        created_by=uid,
+        created_by=user.id,
     )
     db.add(t)
     db.commit()
@@ -58,12 +56,12 @@ def patch_task(
     task_id: int,
     payload: TaskPatch,
     db: Session = Depends(get_db),
-    uid: int = Depends(current_user_id),
+    user: User = Depends(get_current_user),
 ):
     t = db.get(Task, task_id)
     if not t:
         raise HTTPException(404, "Task not found")
-    ensure_member(db, t.space_id, uid)
+    ensure_member(db, t.space_id, user.id)
     if payload.status is not None:
         t.status = TaskStatus(payload.status)
     if payload.assignee_id is not None:

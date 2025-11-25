@@ -1,11 +1,11 @@
-from typing import Generator
+from typing import Generator, Optional
 
-from fastapi import HTTPException
+from fastapi import Cookie, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .db import SessionLocal
-from .models import SpaceMember
+from .models import SpaceMember, User
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -30,3 +30,19 @@ def is_member(db: Session, space_id: int, user_id: int) -> bool:
         select(SpaceMember).where(SpaceMember.space_id == space_id, SpaceMember.user_id == user_id)
     )
     return row is not None
+
+
+def get_current_user(
+    db: Session = Depends(get_db),
+    uid: Optional[str] = Cookie(default=None, alias="uid"),
+) -> User:
+    if uid is None:
+        raise HTTPException(401, "Not authenticated")
+    try:
+        user_id = int(uid)
+    except ValueError as exc:  # pragma: no cover - defensive
+        raise HTTPException(401, "Bad session") from exc
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(401, "Session user not found")
+    return user

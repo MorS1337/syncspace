@@ -20,6 +20,7 @@ services:
     volumes:
       - ./api/app:/app/app:rw
       - ./api/migrations:/app/migrations:rw
+      - ./api/alembic.ini:/app/alembic.ini:ro
 
   web:
     build: ./web

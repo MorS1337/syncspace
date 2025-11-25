@@ -30,6 +30,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
     email: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     avatar_url: Mapped[Optional[str]] = mapped_column(String(512))
     created_at: Mapped[str] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
