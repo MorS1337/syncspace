@@ -36,7 +36,9 @@ def run():
             db.add_all(
                 [
                     Page(space_id=sp.id, title="Brief", md_content="# Идея\nОписание..."),
-                    Page(space_id=sp.id, title="Plan", md_content="- [ ] API\n- [ ] UI"),
+                    Page(
+                        space_id=sp.id, title="Plan", md_content="- [ ] API\n- [ ] UI"
+                    ),  # хонер дранный хуесос
                 ]
             )
             db.add_all(

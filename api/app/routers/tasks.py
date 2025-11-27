@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.deps import get_current_user, get_db, is_member
-from app.models import Task, TaskStatus, User
+from app.models import Tag, Task, TaskStatus, User
 from app.schemas import TaskCreate, TaskOut, TaskPatch
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
@@ -43,8 +43,15 @@ def create_task(
         description=payload.description,
         due_at=payload.due_at,
         assignee_id=payload.assignee_id,
+        priority=payload.priority,
         created_by=user.id,
     )
+
+    # Handle tags
+    if payload.tag_ids:
+        tags = db.execute(select(Tag).where(Tag.id.in_(payload.tag_ids))).scalars().all()
+        t.tags = tags
+
     db.add(t)
     db.commit()
     db.refresh(t)
@@ -62,6 +69,11 @@ def patch_task(
     if not t:
         raise HTTPException(404, "Task not found")
     ensure_member(db, t.space_id, user.id)
+
+    if payload.title is not None:
+        t.title = payload.title
+    if payload.description is not None:
+        t.description = payload.description
     if payload.status is not None:
         t.status = TaskStatus(payload.status)
     if payload.assignee_id is not None:
@@ -72,6 +84,23 @@ def patch_task(
         t.due_at = payload.due_at
     if payload.priority is not None:
         t.priority = payload.priority
+    if payload.tag_ids is not None:
+        tags = db.execute(select(Tag).where(Tag.id.in_(payload.tag_ids))).scalars().all()
+        t.tags = tags
+
     db.commit()
     db.refresh(t)
     return t
+
+
+@router.delete("/{task_id}")
+def delete_task(
+    task_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+):
+    t = db.get(Task, task_id)
+    if not t:
+        raise HTTPException(404, "Task not found")
+    ensure_member(db, t.space_id, user.id)
+    db.delete(t)
+    db.commit()
+    return {"ok": True}

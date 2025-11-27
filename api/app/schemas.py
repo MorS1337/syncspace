@@ -64,13 +64,18 @@ class TaskCreate(BaseModel):
     description: str = ""
     due_at: Optional[datetime] = None
     assignee_id: Optional[int] = None
+    priority: int = 0
+    tag_ids: list[int] = []
 
 
 class TaskPatch(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
     status: Optional[Literal["todo", "in_progress", "done"]] = None
     assignee_id: Optional[int] = None
     due_at: Optional[datetime] = None
     priority: Optional[int] = None
+    tag_ids: Optional[list[int]] = None
 
 
 class TaskOut(BaseModel):
@@ -82,6 +87,7 @@ class TaskOut(BaseModel):
     priority: int
     assignee_id: Optional[int]
     due_at: Optional[datetime]
+    tag_ids: list[int] = []
 
     class Config:
         from_attributes = True

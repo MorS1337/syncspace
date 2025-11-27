@@ -63,3 +63,16 @@ def update_page(
     db.commit()
     db.refresh(page)
     return page
+
+
+@router.delete("/{page_id}")
+def delete_page(
+    page_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
+):
+    page = db.get(Page, page_id)
+    if not page:
+        raise HTTPException(404, "Page not found")
+    ensure_member(db, page.space_id, user.id)
+    db.delete(page)
+    db.commit()
+    return {"ok": True}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 from typing import List, Optional
 
-from sqlalchemy import TIMESTAMP, Enum, ForeignKey, String, Text, func
+from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer, String, Table, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -46,6 +46,7 @@ class Space(Base):
 
     pages: Mapped[List["Page"]] = relationship(back_populates="space", cascade="all, delete-orphan")
     tasks: Mapped[List["Task"]] = relationship(back_populates="space", cascade="all, delete-orphan")
+    tags: Mapped[List["Tag"]] = relationship(back_populates="space", cascade="all, delete-orphan")
 
 
 class SpaceMember(Base):
@@ -76,6 +77,15 @@ class Page(Base):
     space: Mapped["Space"] = relationship(back_populates="pages")
 
 
+# Association table for Task-Tag many-to-many relationship
+task_tags = Table(
+    "task_tags",
+    Base.metadata,
+    Column("task_id", Integer, ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True),
+    Column("tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 class Task(Base):
     __tablename__ = "tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -95,6 +105,19 @@ class Task(Base):
     )
 
     space: Mapped["Space"] = relationship(back_populates="tasks")
+    tags: Mapped[List["Tag"]] = relationship(secondary=task_tags, back_populates="tasks")
+
+
+class Tag(Base):
+    __tablename__ = "tags"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    space_id: Mapped[int] = mapped_column(ForeignKey("spaces.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    color: Mapped[str] = mapped_column(String(7), default="#3b82f6")  # Hex color
+    created_at: Mapped[str] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    space: Mapped["Space"] = relationship(back_populates="tags")
+    tasks: Mapped[List["Task"]] = relationship(secondary=task_tags, back_populates="tags")
 
 
 class Message(Base):
