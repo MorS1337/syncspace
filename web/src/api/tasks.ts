@@ -30,3 +30,7 @@ export const updateTask = async (
   return data;
 };
 
+export const deleteTask = async (taskId: number): Promise<void> => {
+  await api.delete(`/tasks/${taskId}`);
+};
+

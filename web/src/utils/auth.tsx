@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { api } from "@utils/api";
 
-type User = { id: number; name: string; email?: string | null };
+type User = { id: number; name: string; email?: string | null; avatar_url?: string | null };
 
 type AuthCtx = {
   user: User | null;

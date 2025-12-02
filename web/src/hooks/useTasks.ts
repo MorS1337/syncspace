@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createTask, listTasksBySpace, updateTask } from "@api/tasks";
+import { createTask, deleteTask, listTasksBySpace, updateTask } from "@api/tasks";
 import type { Task, TaskStatus, UpdateTaskPayload } from "@app-types/index";
 import { queryClient } from "@utils/queryClient";
 
@@ -24,10 +24,16 @@ export const useTasks = (spaceId: number, status?: TaskStatus) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: tasksKey(spaceId) })
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (taskId: number) => deleteTask(taskId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: tasksKey(spaceId) })
+  });
+
   return {
     tasksQuery: listQuery,
     createTask: createMutation.mutateAsync,
     updateTask: updateMutation.mutateAsync,
+    deleteTask: deleteMutation.mutateAsync,
     updating: updateMutation.isPending
   };
 };

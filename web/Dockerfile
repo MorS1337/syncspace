@@ -1,6 +1,10 @@
 FROM node:20-alpine
 WORKDIR /app
-RUN npm init -y && npm pkg set scripts.dev="node -e 'console.log(`Web placeholder on :5173`)'; sleep 3650d"
+COPY package.json ./
+RUN npm install
+COPY . .
+RUN chown -R node:node /app
+USER node
 EXPOSE 5173
-CMD ["npm","run","dev"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 

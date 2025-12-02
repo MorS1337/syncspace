@@ -23,6 +23,7 @@ export type Task = {
   priority: number;
   assignee_id?: number | null;
   due_at?: string | null;
+  tag_ids?: number[];
 };
 
 export type CreateSpacePayload = {

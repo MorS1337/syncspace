@@ -11,13 +11,14 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@components": resolveFromSrc("components"),
-      "@pages": resolveFromSrc("pages"),
-      "@utils": resolveFromSrc("utils"),
-      "@assets": resolveFromSrc("assets"),
-      "@api": resolveFromSrc("api"),
-      "@hooks": resolveFromSrc("hooks"),
-      "@app-types": resolveFromSrc("types")
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@pages": path.resolve(__dirname, "./src/pages"),
+      "@utils": path.resolve(__dirname, "./src/utils"),
+      "@assets": path.resolve(__dirname, "./src/assets"),
+      "@api": path.resolve(__dirname, "./src/api"),
+      "@hooks": path.resolve(__dirname, "./src/hooks"),
+      "@app-types": path.resolve(__dirname, "./src/types"),
+      "@constants": path.resolve(__dirname, "./src/constants"),
     }
   },
   server: {

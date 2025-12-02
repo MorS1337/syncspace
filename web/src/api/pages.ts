@@ -24,3 +24,7 @@ export const updatePage = async (
   return data;
 };
 
+export const deletePage = async (pageId: number): Promise<void> => {
+  await api.delete(`/pages/${pageId}`);
+};
+
