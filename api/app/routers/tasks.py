@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.deps import get_current_user, get_db, is_member
 from app.models import Tag, Task, TaskStatus, User
 from app.schemas import TaskCreate, TaskOut, TaskPatch
+from app.ws import manager
 
 router = APIRouter(prefix="/api/tasks", tags=["tasks"])
 
@@ -29,7 +30,7 @@ def list_tasks(
 
 
 @router.post("", response_model=TaskOut)
-def create_task(
+async def create_task(
     payload: TaskCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     ensure_member(db, payload.space_id, user.id)
@@ -55,11 +56,12 @@ def create_task(
     db.add(t)
     db.commit()
     db.refresh(t)
+    await manager.broadcast(f"task_created:{t.space_id}")
     return t
 
 
 @router.patch("/{task_id}", response_model=TaskOut)
-def patch_task(
+async def patch_task(
     task_id: int,
     payload: TaskPatch,
     db: Session = Depends(get_db),
@@ -90,11 +92,12 @@ def patch_task(
 
     db.commit()
     db.refresh(t)
+    await manager.broadcast(f"task_updated:{t.space_id}")
     return t
 
 
 @router.delete("/{task_id}")
-def delete_task(
+async def delete_task(
     task_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     t = db.get(Task, task_id)
@@ -103,4 +106,5 @@ def delete_task(
     ensure_member(db, t.space_id, user.id)
     db.delete(t)
     db.commit()
+    await manager.broadcast(f"task_deleted:{t.space_id}")
     return {"ok": True}

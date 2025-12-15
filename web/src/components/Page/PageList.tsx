@@ -13,7 +13,8 @@ import {
   alpha,
   useTheme
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { queryClient } from "@utils/queryClient";
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -24,15 +25,27 @@ type Props = {
   pages: Page[] | undefined;
   loading: boolean;
   activePageId?: number;
+  spaceId: number;
   onSelect: (pageId: number) => void;
   onCreate: () => void;
   onRefresh: () => void;
   onDelete?: (pageId: number) => void;
 };
 
-const PageList = ({ pages, loading, activePageId, onSelect, onCreate, onRefresh, onDelete }: Props) => {
+const PageList = ({ pages, loading, activePageId, spaceId, onSelect, onCreate, onRefresh, onDelete }: Props) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = (event) => {
+      const message = event.data;
+      if (message.startsWith("page_")) {
+        queryClient.invalidateQueries({ queryKey: ["pages", spaceId] });
+      }
+    };
+    return () => ws.close();
+  }, [spaceId]);
 
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [pageToDelete, setPageToDelete] = useState<number | null>(null);

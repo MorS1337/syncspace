@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.deps import get_current_user, get_db
 from app.models import SpaceMember, User
+from app.ws import manager
 
 router = APIRouter(prefix="/api/spaces", tags=["members"])
 
@@ -52,7 +53,7 @@ def list_members(
 
 
 @router.delete("/{space_id}/members/{user_id}")
-def remove_member(
+async def remove_member(
     space_id: int,
     user_id: int,
     db: Session = Depends(get_db),
@@ -82,11 +83,12 @@ def remove_member(
     db.delete(member_to_remove)
     db.commit()
 
+    await manager.broadcast(f"member_removed:{space_id}")
     return {"message": "Member removed"}
 
 
 @router.patch("/{space_id}/members/{user_id}")
-def update_member_role(
+async def update_member_role(
     space_id: int,
     user_id: int,
     payload: dict,  # {"role": "member" | "organizer" | "mentor"}
@@ -119,4 +121,5 @@ def update_member_role(
     member_to_update.role = Role[new_role]
     db.commit()
 
+    await manager.broadcast(f"member_updated:{space_id}")
     return {"message": "Role updated"}

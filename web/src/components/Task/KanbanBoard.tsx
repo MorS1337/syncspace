@@ -15,6 +15,8 @@ import {
   useSortable
 } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
+import { useEffect } from "react";
+import { queryClient } from "@utils/queryClient";
 import type { Task, TaskStatus } from "@app-types/index";
 import TaskCard from "./TaskCard";
 
@@ -44,6 +46,17 @@ type Props = {
 const KanbanBoard = ({ tasks, loading, spaceId, onStatusChange, onCreate, onTaskClick, onEdit, onDelete }: Props) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = (event) => {
+      const message = event.data;
+      if (message.startsWith("task_")) {
+        queryClient.invalidateQueries({ queryKey: ["tasks", spaceId] });
+      }
+    };
+    return () => ws.close();
+  }, [spaceId]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const taskId = Number(event.active.id);

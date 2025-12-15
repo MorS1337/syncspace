@@ -165,6 +165,7 @@ const SpacePage = () => {
               pages={pagesQuery.data}
               loading={pagesQuery.isLoading}
               activePageId={activePageId}
+              spaceId={Number(spaceId)}
               onSelect={(id) => setActivePageId(id)}
               onCreate={() => setPageDialog(true)}
               onRefresh={() => pagesQuery.refetch()}

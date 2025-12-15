@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.deps import get_current_user, get_db, is_member
 from app.models import Page, User
 from app.schemas import PageCreate, PageOut, PageUpdate
+from app.ws import manager
 
 router = APIRouter(prefix="/api/pages", tags=["pages"])
 
@@ -28,7 +29,7 @@ def list_pages(
 
 
 @router.post("", response_model=PageOut)
-def create_page(
+async def create_page(
     payload: PageCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     ensure_member(db, payload.space_id, user.id)
@@ -36,6 +37,7 @@ def create_page(
     db.add(page)
     db.commit()
     db.refresh(page)
+    await manager.broadcast(f"page_created:{payload.space_id}")
     return page
 
 
@@ -49,7 +51,7 @@ def get_page(page_id: int, db: Session = Depends(get_db), user: User = Depends(g
 
 
 @router.put("/{page_id}", response_model=PageOut)
-def update_page(
+async def update_page(
     page_id: int,
     payload: PageUpdate,
     db: Session = Depends(get_db),
@@ -62,11 +64,12 @@ def update_page(
     page.md_content = payload.md_content
     db.commit()
     db.refresh(page)
+    await manager.broadcast(f"page_updated:{page.space_id}")
     return page
 
 
 @router.delete("/{page_id}")
-def delete_page(
+async def delete_page(
     page_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
     page = db.get(Page, page_id)
@@ -75,4 +78,5 @@ def delete_page(
     ensure_member(db, page.space_id, user.id)
     db.delete(page)
     db.commit()
+    await manager.broadcast(f"page_deleted:{page.space_id}")
     return {"ok": True}

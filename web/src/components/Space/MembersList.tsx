@@ -12,7 +12,8 @@ import {
     useTheme,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { queryClient } from "@utils/queryClient";
 import { useMembers, useRemoveMember, useUpdateMemberRole, SpaceMember } from "../../hooks/useMembers";
 
 interface Props {
@@ -26,6 +27,17 @@ export function MembersList({ spaceId, currentUserId }: Props) {
     const { data: members, isLoading } = useMembers(spaceId);
     const removeMember = useRemoveMember(spaceId);
     const updateRole = useUpdateMemberRole(spaceId);
+
+    useEffect(() => {
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        ws.onmessage = (event) => {
+            const message = event.data;
+            if (message.startsWith("member_")) {
+                queryClient.invalidateQueries({ queryKey: ["spaces", spaceId, "members"] });
+            }
+        };
+        return () => ws.close();
+    }, [spaceId]);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedMember, setSelectedMember] = useState<SpaceMember | null>(null);
