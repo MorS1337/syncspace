@@ -88,7 +88,7 @@ export function MembersList({ spaceId, currentUserId }: Props) {
     }
 
     return (
-        <Box>
+        <Box sx={{ px: 3 }}>
             <Typography variant="h6" fontWeight={700} mb={2}>
                 Участники ({members?.length || 0})
             </Typography>

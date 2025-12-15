@@ -26,6 +26,16 @@ def register(payload: UserCreate, resp: Response, db: Session = Depends(get_db))
         raise HTTPException(400, "Name is required")
     if not payload.password:
         raise HTTPException(400, "Password is required")
+    
+    # Validate password requirements
+    if len(payload.password) < 8:
+        raise HTTPException(400, "Password must be at least 8 characters long")
+    if not any(c.isalpha() for c in payload.password):
+        raise HTTPException(400, "Password must contain at least one letter")
+    if not any(c.isdigit() for c in payload.password):
+        raise HTTPException(400, "Password must contain at least one digit")
+    if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?/" for c in payload.password):
+        raise HTTPException(400, "Password must contain at least one special character")
 
     existing = db.scalar(select(User).where(User.name == payload.name))
     if existing:

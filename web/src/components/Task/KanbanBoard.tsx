@@ -54,7 +54,7 @@ const KanbanBoard = ({ tasks, loading, spaceId, onStatusChange, onCreate, onTask
   };
 
   return (
-    <Stack spacing={2} overflow="auto" pb={2}>
+    <Stack spacing={2} overflow="auto" pb={2} sx={{ px: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h6" fontWeight={700}>
           Доска задач
@@ -117,7 +117,7 @@ const DroppableColumn = ({ column, tasks, isDark, spaceId, onTaskClick, onEdit, 
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
   return (
-    <Box
+    <Box 
       ref={setNodeRef}
       flex={1}
       bgcolor={

@@ -47,7 +47,7 @@ const SpaceDashboard = ({ spaceId }: Props) => {
     ];
 
     return (
-        <Box py={3}>
+        <Box sx={{ px: 3, py: 3 }}>
             <Typography variant="h5" fontWeight={700} gutterBottom>
                 Обзор пространства
             </Typography>

@@ -38,7 +38,7 @@ const MarkdownEditor = ({
 
   const CodeBlock = ({ inline, className, children, ...props }: CodeProps) => {
     const match = /language-(\w+)/.exec(className || "");
-    if (!inline && match) {
+    if (!inline && match && children && String(children).trim()) {
       return (
         <SyntaxHighlighter
           style={theme.palette.mode === "dark" ? materialDark : materialLight}
@@ -51,7 +51,7 @@ const MarkdownEditor = ({
     }
     return (
       <code className={className} {...props}>
-        {children}
+        {children || ""}
       </code>
     );
   };
@@ -136,7 +136,7 @@ const MarkdownEditor = ({
               }}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-                {content || "Ничего нет..."}
+                {content || ""}
               </ReactMarkdown>
             </Box>
           </Panel>

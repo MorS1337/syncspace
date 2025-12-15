@@ -134,10 +134,10 @@ const SpacePage = () => {
       ) : spaceQuery.isError ? (
         <Alert severity="error">{spaceQuery.error.message}</Alert>
       ) : (
-        <Stack spacing={1}>
+        <Stack spacing={1} sx={{ p: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography variant="h4">{spaceQuery.data?.title}</Typography>
-            <Chip label={`Invite: ${spaceQuery.data?.invite_code}`} />
+            <Chip label={`Код приглашения: ${spaceQuery.data?.invite_code}`} />
           </Stack>
           <Typography color="text.secondary">
             {spaceQuery.data?.description || "Нет описания"}
@@ -198,7 +198,7 @@ const SpacePage = () => {
             {tasksQuery.isError && <Alert severity="error">{tasksQuery.error.message}</Alert>}
 
             {/* Filter Controls */}
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2} sx={{ px: 3 }}>
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel>Исполнитель</InputLabel>
                 <Select
