@@ -27,7 +27,7 @@ type Props = {
     open: boolean;
     onClose: () => void;
     spaceId: number;
-    task?: Task; // If provided, we are editing
+    task?: Task;
     onSubmit: (payload: {
         title: string;
         description?: string;
@@ -152,41 +152,6 @@ const TaskDialog = ({ open, onClose, spaceId, task, onSubmit, onDelete }: Props)
                         onChange={(e) => setValues((prev) => ({ ...prev, due_at: e.target.value }))}
                         InputLabelProps={{ shrink: true }}
                         helperText="Опциональная дата выполнения задачи"
-                    />
-                    <Autocomplete
-                        multiple
-                        freeSolo
-                        options={tagsQuery.data || []}
-                        getOptionLabel={(option) => typeof option === 'string' ? option : option.name}
-                        value={(tagsQuery.data || []).filter(tag => values.tag_ids.includes(tag.id))}
-                        onChange={async (_, newValue) => {
-                            const tagIds: number[] = [];
-                            for (const item of newValue) {
-                                if (typeof item === 'string') {
-                                    // Create new tag
-                                    const newTag = await createTag({ space_id: spaceId, name: item });
-                                    tagIds.push(newTag.id);
-                                } else {
-                                    tagIds.push(item.id);
-                                }
-                            }
-                            setValues(prev => ({ ...prev, tag_ids: tagIds }));
-                        }}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Теги" helperText="Выберите или создайте новые теги" />
-                        )}
-                        renderTags={(tagValue, getTagProps) =>
-                            tagValue.map((option, index) => (
-                                <Chip
-                                    label={typeof option === 'string' ? option : option.name}
-                                    {...getTagProps({ index })}
-                                    sx={{
-                                        bgcolor: typeof option === 'string' ? '#3b82f6' : option.color,
-                                        color: '#fff'
-                                    }}
-                                />
-                            ))
-                        }
                     />
                 </Stack>
             </DialogContent>

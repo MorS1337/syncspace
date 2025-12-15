@@ -29,7 +29,9 @@ class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
-    email: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    email: Mapped[Optional[str]] = mapped_column(
+        String(255), unique=True
+    )  # максимальная длина почты
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     avatar_url: Mapped[Optional[str]] = mapped_column(String(512))
     created_at: Mapped[str] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
@@ -77,7 +79,6 @@ class Page(Base):
     space: Mapped["Space"] = relationship(back_populates="pages")
 
 
-# Association table for Task-Tag many-to-many relationship
 task_tags = Table(
     "task_tags",
     Base.metadata,
@@ -113,7 +114,7 @@ class Tag(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     space_id: Mapped[int] = mapped_column(ForeignKey("spaces.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
-    color: Mapped[str] = mapped_column(String(7), default="#3b82f6")  # Hex color
+    color: Mapped[str] = mapped_column(String(7), default="#3b82f6")  # hex цвет
     created_at: Mapped[str] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     space: Mapped["Space"] = relationship(back_populates="tags")

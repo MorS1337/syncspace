@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/pages", tags=["pages"])
 
 def ensure_member(db: Session, space_id: int, uid: int):
     if not is_member(db, space_id, uid):
-        raise HTTPException(403, "Not a member")
+        raise HTTPException(403, "Not a member")  # нет доступа
 
 
 @router.get("/by-space/{space_id}", response_model=list[PageOut])
@@ -37,7 +37,7 @@ async def create_page(
     db.add(page)
     db.commit()
     db.refresh(page)
-    await manager.broadcast(f"page_created:{payload.space_id}")
+    await manager.broadcast(f"page_created:{payload.space_id}")  # для вебсокета
     return page
 
 
@@ -64,7 +64,7 @@ async def update_page(
     page.md_content = payload.md_content
     db.commit()
     db.refresh(page)
-    await manager.broadcast(f"page_updated:{page.space_id}")
+    await manager.broadcast(f"page_updated:{page.space_id}")  # для вебсокета
     return page
 
 
@@ -78,5 +78,5 @@ async def delete_page(
     ensure_member(db, page.space_id, user.id)
     db.delete(page)
     db.commit()
-    await manager.broadcast(f"page_deleted:{page.space_id}")
+    await manager.broadcast(f"page_deleted:{page.space_id}")  # для вебсокета
     return {"ok": True}

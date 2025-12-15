@@ -29,10 +29,10 @@ const statusLabels: Record<Task["status"], string> = {
 };
 
 const getPriorityColor = (priority: number): "error" | "warning" | "info" | "default" => {
-  if (priority >= 7) return "error";  // High: red
-  if (priority >= 4) return "warning"; // Medium: orange
-  if (priority >= 1) return "info";    // Low: blue
-  return "default";                     // None: grey
+  if (priority >= 7) return "error";  // High: красный
+  if (priority >= 4) return "warning"; // Medium: оранжевый
+  if (priority >= 1) return "info";    // Low: голубой
+  return "default";                     // None: серый
 };
 
 const getPriorityLabel = (priority: number): string => {

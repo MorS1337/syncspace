@@ -31,7 +31,6 @@ class TagResponse(BaseModel):
 def get_space_tags(
     space_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
-    """Get all tags for a space"""
     stmt = select(Tag).where(Tag.space_id == space_id)
     tags = db.execute(stmt).scalars().all()
     return tags
@@ -41,7 +40,6 @@ def get_space_tags(
 def create_tag(
     tag_data: TagCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
-    """Create a new tag"""
     tag = Tag(space_id=tag_data.space_id, name=tag_data.name, color=tag_data.color)
     db.add(tag)
     db.commit()
@@ -51,7 +49,6 @@ def create_tag(
 
 @router.delete("/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_tag(tag_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    """Delete a tag"""
     tag = db.get(Tag, tag_id)
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")

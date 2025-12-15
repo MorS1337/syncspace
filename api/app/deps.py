@@ -32,6 +32,7 @@ def is_member(db: Session, space_id: int, user_id: int) -> bool:
     return row is not None
 
 
+# я сделал, семен
 def get_current_user(
     db: Session = Depends(get_db),
     uid: Optional[str] = Cookie(default=None, alias="uid"),
@@ -40,7 +41,7 @@ def get_current_user(
         raise HTTPException(401, "Not authenticated")
     try:
         user_id = int(uid)
-    except ValueError as exc:  # pragma: no cover - defensive
+    except ValueError as exc:
         raise HTTPException(401, "Bad session") from exc
     user = db.get(User, user_id)
     if not user:

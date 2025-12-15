@@ -60,7 +60,6 @@ const TableOfContents = ({ content }: Props) => {
                     <ListItemButton
                         key={index}
                         onClick={() => {
-                            // Scroll to the heading in the preview panel
                             const previewPanel = document.querySelector('.markdown-preview');
                             if (previewPanel) {
                                 const headings = previewPanel.querySelectorAll('h1, h2, h3, h4, h5, h6');

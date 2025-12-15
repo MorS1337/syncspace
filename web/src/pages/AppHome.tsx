@@ -70,7 +70,7 @@ export default function AppHome() {
     setJoinError("");
     try {
       const space = await joinSpace(inviteCode.trim());
-      // Check if already in list
+
       if (!spaces.find(s => s.id === space.id)) {
         setSpaces([space, ...spaces]);
       }

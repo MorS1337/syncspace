@@ -1,4 +1,3 @@
-// Page Templates
 export const PAGE_TEMPLATES = {
     blank: {
         title: "Пустая страница",

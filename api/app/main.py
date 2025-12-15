@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers import auth, health, members, pages, spaces, tags, tasks
 from .ws import manager
 
-app = FastAPI(title="Hack Platform API", version="0.1.0")
+app = FastAPI(title="Hack Platform API", version="0.1.0")  # только начало наше
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173"],  # адрес фронтенда
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,6 +23,7 @@ app.include_router(members.router)
 app.include_router(tags.router)
 
 
+# для обновления в реальном времени
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)

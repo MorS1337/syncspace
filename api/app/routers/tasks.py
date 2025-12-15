@@ -48,7 +48,6 @@ async def create_task(
         created_by=user.id,
     )
 
-    # Handle tags
     if payload.tag_ids:
         tags = db.execute(select(Tag).where(Tag.id.in_(payload.tag_ids))).scalars().all()
         t.tags = tags

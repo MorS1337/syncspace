@@ -27,7 +27,6 @@ def register(payload: UserCreate, resp: Response, db: Session = Depends(get_db))
     if not payload.password:
         raise HTTPException(400, "Password is required")
 
-    # Validate password requirements
     if len(payload.password) < 8:
         raise HTTPException(400, "Password must be at least 8 characters long")
     if not any(c.isalpha() for c in payload.password):

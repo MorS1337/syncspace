@@ -15,7 +15,7 @@ class UserOut(BaseModel):
 
 class UserCreate(BaseModel):
     name: str
-    password: str
+    password: str  # он проверяется
     email: Optional[str] = None
 
 

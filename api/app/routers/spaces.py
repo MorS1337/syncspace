@@ -12,10 +12,10 @@ router = APIRouter(prefix="/api/spaces", tags=["spaces"])
 
 
 def _invite() -> str:
-    return secrets.token_urlsafe(6)
+    return secrets.token_urlsafe(6)  # 19 770 609 664 000 000 комбинаций +-
 
 
-@router.post("", response_model=SpaceOut)
+@router.post("", response_model=SpaceOut)  # а че не spacein?
 def create_space(
     payload: SpaceCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)
 ):
@@ -61,5 +61,5 @@ def get_space(space_id: int, db: Session = Depends(get_db), user: User = Depends
     if not sp:
         raise HTTPException(404, "Space not found")
     if not is_member(db, space_id, user.id):
-        raise HTTPException(403, "Not a member")
+        raise HTTPException(403, "Not a member")  # не в нашем спайсе
     return sp

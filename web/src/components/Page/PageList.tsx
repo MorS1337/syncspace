@@ -152,7 +152,7 @@ const PageList = ({ pages, loading, activePageId, spaceId, onSelect, onCreate, o
                   borderRadius: 2,
                   px: 1.5,
                   py: 1,
-                  pr: 5, // space for delete button
+                  pr: 5,
                   color: isActive ? "#3b82f6" : "text.primary",
                   bgcolor: isActive
                     ? isDark ? alpha("#3b82f6", 0.12) : alpha("#3b82f6", 0.08)

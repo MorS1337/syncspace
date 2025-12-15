@@ -17,9 +17,10 @@ export const useMembers = (spaceId: number) => {
             const { data } = await api.get<SpaceMember[]>(`/spaces/${spaceId}/members`);
             return data;
         },
-        refetchInterval: 10000, // Auto-refresh every 10 seconds (pseudo real-time)
+        refetchInterval: 10000, // 10 секунд
     });
 };
+
 
 export const useRemoveMember = (spaceId: number) => {
     const queryClient = useQueryClient();

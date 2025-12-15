@@ -50,7 +50,6 @@ const SpacePage = () => {
   const [pageTemplate, setPageTemplate] = useState<TemplateKey>("blank");
   const [draft, setDraft] = useState("");
 
-  // Task Filters
   const [filterAssignee, setFilterAssignee] = useState<number | "all">("all");
   const [filterPriority, setFilterPriority] = useState<"all" | "high" | "medium" | "low">("all");
 
@@ -91,7 +90,6 @@ const SpacePage = () => {
     const template = PAGE_TEMPLATES[pageTemplate];
     const page = await createPage(pageTitle.trim());
 
-    // If template has content, update the page with template content
     if (template.content) {
       await updatePage({ md_content: template.content });
       setDraft(template.content);
@@ -114,7 +112,6 @@ const SpacePage = () => {
     await updateTask({ taskId, data: { status } });
   };
 
-  // Filter tasks based on selected filters
   const filteredTasks = tasksQuery.data?.filter(task => {
     if (filterAssignee !== "all" && task.assignee_id !== filterAssignee) return false;
     if (filterPriority === "high" && task.priority < 7) return false;
@@ -198,7 +195,6 @@ const SpacePage = () => {
           <>
             {tasksQuery.isError && <Alert severity="error">{tasksQuery.error.message}</Alert>}
 
-            {/* Filter Controls */}
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mb={2} sx={{ px: 3 }}>
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel>Исполнитель</InputLabel>
@@ -278,11 +274,6 @@ const SpacePage = () => {
                 setEditingTask(undefined);
               }}
               onDelete={(id) => {
-                // This is called from within the dialog (if we kept the button there)
-                // We can reuse the confirmation flow or just delete directly if the dialog handles confirmation
-                // But since we are moving to icons, we might not need this here, 
-                // OR we can keep it as a fallback.
-                // Let's just close the dialog and open the confirmation dialog
                 setTaskDialog(false);
                 const task = tasksQuery.data?.find(t => t.id === id);
                 if (task) {
